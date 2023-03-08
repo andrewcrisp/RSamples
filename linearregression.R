@@ -35,6 +35,14 @@ agged %>% ggplot(aes(x = LON, y = LAT)) +
 model <- lm(n ~ hour, data = agged)
 model.predict <- cbind(agged, predict(model, interval = 'confidence'))
 
-model.predict %>% ggplot(aes(hour,n)) +
+model.predict %>% 
+  mutate(hourfct = as.numeric(hour)) %>% 
+  ggplot(aes(hour,n)) +
+  geom_violin(aes(group = cut_width(hour, 1)), na.rm = TRUE) +
   geom_line(aes(hour, fit)) +
-  geom_ribbon(aes(ymin=lwr,ymax=upr), alpha=0.3)
+  geom_point(aes(hour, fit)) +
+  geom_ribbon(aes(ymin=lwr,ymax=upr), alpha=0.3) +
+  lims(y = c(0,100)) +
+  labs(title = "Linear regression of number of crimes by hour")
+
+       
